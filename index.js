@@ -77,7 +77,7 @@ client.on('message', async message => {
     if (prefix.length == 0) {return}
 
     // Split commands and arguments from message so they can be passed to functions
-    const args = message.content.slice(prefix[0].length).trim().split(/\s+/);
+    const args = message.content.slice(prefix[0].length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase().replace(/[-_]/,'');
 
     // If the command isn't in the  command folder, move on

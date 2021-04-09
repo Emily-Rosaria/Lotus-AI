@@ -8,9 +8,9 @@ module.exports = {
     allowDM: false,
     usage: '<rolename1> <colour1|none>\n[rolename2] [colour2|none]\n[rolename3] [colour3|none]\n...', // Help text to explain how to use the command (if it had any arguments)
     async execute(message, args) {
-      var role_args = message.split(/\n/);
+      var role_args = message.content.split(/\n+/);
       if (role_args.length == 1) {
-        role_args = message.split(/ +/);
+        role_args = message.content.split(/ +/);
         role_args.shift(); //remove command trigger
         var color = role_args.length > 1 ? role_args.pop() : 'none';
         role_args = [role_args.join(' '), color];
