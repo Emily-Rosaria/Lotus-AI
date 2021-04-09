@@ -10,25 +10,24 @@ module.exports = {
     async execute(message, args) {
       var role_args = message.content.split(/\n+/);
       if (role_args.length == 1) {
-        role_args = message.content.split(/ +/);
+        role_args = message.content.trim().split(/ +/);
         role_args.shift(); //remove command trigger
         var color = role_args.length > 1 ? role_args.pop() : 'none';
         role_args = [role_args.join(' '), color];
       } else {
         role_args[0] = role_args[0].split(/ +/);
         if (role_args[0].length == 1) {
-          role_args.shift();
-          role_args = role_args.join(' ');
+          role_args.shift(); //remove command trigger
         } else {
           role_args[0].shift();
           role_args[0] = role_args[0].join(' '); //remove command trigger
         }
-        role_args.map(row => {
-          var items = row.split(/ +/);
+        role_args = role_args.map(row => {
+          var items = row.trim().split(/ +/);
           var color = items.length > 1 ? items.pop() : 'none';
-          var items = items.join(' ');
-          return [items, color];
-        })
+          var items = items.join(' ').trim();
+          return [items,color];
+        });
         role_args = role_args.flat();
       }
       for (i = 0; 2*i < role_args.length; i++) {
