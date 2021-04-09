@@ -18,9 +18,10 @@ module.exports = {
         role_args[0] = role_args[0].split(/ +/);
         if (role_args[0].length == 1) {
           role_args.shift();
+          role_args = role_args.join(' ');
         } else {
           role_args[0].shift();
-          role_args[0].join(' '); //remove command trigger
+          role_args[0] = role_args[0].join(' '); //remove command trigger
         }
         role_args.map(row => {
           var items = row.split(/ +/);
@@ -28,6 +29,7 @@ module.exports = {
           var items = items.join(' ');
           return [items, color];
         })
+        role_args = role_args.flat();
       }
       for (i = 0; 2*i < role_args.length; i++) {
         var data = {
