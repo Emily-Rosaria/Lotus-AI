@@ -10,12 +10,13 @@ module.exports = {
     async execute(message, args) {
       for (i = 0; 2*i < args.length; i++) {
         var data = {
-          name: args[2*i]
+          name: args[2*i].trim()
         };
         if (args.length != 2*i + 1 && args[2*i+1] != 'none') {
-          data.color = args[2*i+1];
+          data.color = args[2*i+1].trim();
         }
         await message.guild.roles.create({data:data});
       }
+      message.reply("Done!");
     },
 };
