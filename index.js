@@ -157,7 +157,7 @@ client.on('message', async message => {
           return message.reply("You do not have the required permissions to use this command; this command is only for moderators.");
         }
 
-        else if ((command.perms == "registered") && (!config.perms.registered.some(r => roleCache.has(r)))) {
+        else if ((command.perms == "verified") && (!config.perms.verified.some(r => roleCache.has(r)))) {
           return message.reply("You do not have the required permissions to use this command; this command is only for registered users who are approved.");
         }
       }
