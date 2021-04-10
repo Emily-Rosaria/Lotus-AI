@@ -33,6 +33,7 @@ module.exports = {
         if (!url || url == "") {
           message.reply("Sorry, I'm having trouble accessing the API of woofers at the moment. Try again in a bit.");
         }
+        url = url_base + url;
         const embed = new Discord.MessageEmbed().setImage(url).setTitle('Woof').setFooter('Source: random.dog').setTimestamp();
         message.reply(embed); // Replies to the user with a random dog
     },
