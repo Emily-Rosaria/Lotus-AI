@@ -54,6 +54,10 @@ module.exports = {
 
       // Reset config
       delete require.cache[require.resolve('./../../config.json')];
+
+      // reset inactivity
+      delete require.cache[require.resolve('./../../guild_auto_prune.js')];
+      
       message.reply('Done! All core functions should be updated!');
     },
 };

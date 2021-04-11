@@ -59,6 +59,14 @@ client.on('ready', async function() {
     client.bootTime = (new Date()).getTime();
     client.user.setPresence({ activity: { type: 'PLAYING', name: 'in a Cyberpunk Utopia' }, status: 'online' });
     console.log(`${client.user.username} is up and running! Launched at: ${(new Date()).toUTCString()}.`);
+    cron.schedule('0 21 * * *', async () => { // remind people at 9pm
+      var prune = require('./guild_auto_prune.js');
+      try {
+        prune(client);
+      } catch (err) {
+        console.error(err);
+      }
+    });
 });
 
 /**
