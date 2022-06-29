@@ -12,6 +12,7 @@ const data = new SlashCommandBuilder()
 
 module.exports = {
     name: 'cat', // The name of the command
+    cooldown: 5,
     description: 'Get random cat pics!', // The description of the command (for help text)
     data: data,
     async execute(message) {

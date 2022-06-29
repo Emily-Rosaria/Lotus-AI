@@ -33,6 +33,7 @@ const data = new SlashCommandBuilder()
 module.exports = {
     name: 'anime', // The name of the command
     data: data,
+    cooldown: 5,
     description: 'Get random anime pics from safebooru!', // The description of the command (for help text)
     execute(message) {
         // Get image from the api.
