@@ -16,7 +16,6 @@ const Booru = require('booru'); // This lets me get stuff from weeb sites.
 const { fs, readdirSync } = require('fs');                               // Loads the Filesystem library
 const { path, join } = require("path");
 const Discord = require('discord.js');                  // Loads the discord API library
-const Canvas = require('canvas'); // Pretty pictures
 const readline = require('readline');
 const {google} = require('googleapis');
 var cron = require('node-cron'); // run regular scheduled tasks
@@ -30,7 +29,10 @@ const mongoose = require("mongoose"); // database library
 const connectDB = require("./database/connectDB.js"); // local database connection
 var database = config.dbName; // Database name for the local database
 
-const client = new Discord.Client({ws: { intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MESSAGE_TYPING', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS', 'DIRECT_MESSAGE_TYPING'] }, retryLimit: 3, restRequestTimeout: 25000}); // Initiates the client
+const botIntents = new Discord.Intents();
+botIntents.add(Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_VOICE_STATES, Discord.Intents.FLAGS.GUILD_MEMBERS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Discord.Intents.FLAGS.GUILD_MESSAGE_TYPING, Discord.Intents.FLAGS.DIRECT_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Discord.Intents.FLAGS.DIRECT_MESSAGE_TYPING);
+
+const client = new Discord.Client({intents: botIntents, partials: ["CHANNEL"], allowedMentions: { parse: ['users', 'roles'], repliedUser: true}}); // Initiates the client
 
 client.slashCommands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
 const getAllCommands = function (dir, cmds) {

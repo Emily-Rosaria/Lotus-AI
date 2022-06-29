@@ -44,7 +44,7 @@ module.exports = {
           const embed = new Discord.MessageEmbed()
           .setColor('#2e51a2')
           .setImage(image[0].fileUrl)
-          .setFooter('Image from safebooru: '+tags.join(', '))
+          .setFooter({ text:'Image from safebooru: '+tags.join(', ')})
           .setTimestamp()
           return message.reply({embeds: [embed]});
         })

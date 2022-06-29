@@ -17,7 +17,7 @@ module.exports = {
 
         // Get fox from the api.
         const { image } = await fetch('https://randomfox.ca/floof/').then(response => response.json());
-        const embed = new Discord.MessageEmbed().setImage(image).setTitle('Fox').setFooter('Source: randomfox.ca').setTimestamp();
+        const embed = new Discord.MessageEmbed().setImage(image).setTitle('Fox').setFooter({ text:'Source: randomfox.ca'}).setTimestamp();
         message.reply({embeds: [embed]}); // Replies to the user with a random fox
     },
 };
