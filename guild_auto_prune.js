@@ -1,8 +1,5 @@
 const Discord = require('discord.js'); // Loads the discord API library
-
-// function reminds users between 24 and 48 hours after they joined
-// function reminds users again between 3 and 4 days after they joined
-// function kicks users once they've been on the server for 5+ days
+const fs = require("fs");
 
 const guildID = '892995500180131870';
 const verified_roles = ['892995500297580626'];
@@ -14,6 +11,16 @@ module.exports = async function (client) {
     var guild = await client.guilds.fetch(guildID);
     var channel = await guild.channels.resolve(lurk_channel);
     const now = new Date();
+
+    // delete old reminder
+    fs.readFile("prune_temp.txt", "utf-8", (err, data) => {
+        if (err) { console.log(err) }
+        if (data) {
+          channel.fetch()
+          .then(message => message.delete())
+          .catch(console.error);
+        }
+    })
 
     guild.members.fetch().then((members)=>{
       var lurkers = members.filter((member)=>{
@@ -32,14 +39,17 @@ module.exports = async function (client) {
           lurker.kick("Inactivity. Joined over a week ago."); // kick lurker if no recent submission attempt was made
           return; // don't remind people who made a submission that prevented them from being kicked
         }
-        if ((dayCount % 3) < 1) { // only remind each member once every 3 days
-          lurkers.push(lurker.user.id); // lurkers to warn about a kick
-          return;
-        }
+        lurkers.push(lurker.user.id); // lurkers to warn about a kick
+        return;
       });
       reminder = !lurkers || lurkers.length == 0 ? "" : lurkers.map(l=>`> <@${l}>`).join(', ') + "Hello! This is your friendly neighbourhood robot here to remind you that you may get kicked if you don't submit a character. Read the <#892995502319222787> and submit something to <#892995502319222788>. Feel free to ask if you have any questions!\n```\nTo prevent an inflated or inaccurate member count, any lurking members that haven't recently tried to submit a character are automatically kicked after about a week after joining.\n```";
       if (reminder) {
-        channel.send({content: reminder});
+        const msg = channel.send({content: reminder});
+        const data = ""+msg.id;
+        fs.writeFile("prune_temp.txt", data, (err) => {
+          if (err) console.log(err);
+          console.log("Successfully Written to File.");
+        });
       }
     }).catch((err)=>console.error(err));
 };

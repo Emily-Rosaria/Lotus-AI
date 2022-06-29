@@ -13,14 +13,16 @@ app.listen(port, () => console.log(`Example app listening at http://localhost:${
 
 const fetch = require('node-fetch'); // This lets me get stuff from api.
 const Booru = require('booru'); // This lets me get stuff from weeb sites.
-const fs = require('fs');                               // Loads the Filesystem library
-const path = require("path");
+const { fs, readdirSync } = require('fs');                               // Loads the Filesystem library
+const { path, join } = require("path");
 const Discord = require('discord.js');                  // Loads the discord API library
 const Canvas = require('canvas'); // Pretty pictures
 const readline = require('readline');
 const {google} = require('googleapis');
 var cron = require('node-cron'); // run regular scheduled tasks
 const config = require('./config.json');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 
 const dev = config.dev; // my ID on Discord
 
@@ -30,7 +32,7 @@ var database = config.dbName; // Database name for the local database
 
 const client = new Discord.Client({ws: { intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'GUILD_MESSAGE_TYPING', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS', 'DIRECT_MESSAGE_TYPING'] }, retryLimit: 3, restRequestTimeout: 25000}); // Initiates the client
 
-client.commands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
+client.slashCommands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
 const getAllCommands = function (dir, cmds) {
   files = fs.readdirSync(dir, { withFileTypes: true });
   fileArray = cmds || [];
@@ -46,13 +48,20 @@ const getAllCommands = function (dir, cmds) {
 };
 const commandFiles = getAllCommands('./commands').filter(file => file.endsWith('.js')); // Loads the code for each command from the "commands" folder
 
+const commands = [];
+
 // Loops over each file in the command folder and sets the commands to respond to their name
 for (const file of commandFiles) {
     const command = require(file);
-    client.commands.set(command.name, command);
+    client.slashCommands.set(command.name, command);
+    if (command.data) {
+      commands.push(command.data.toJSON());
+    }
 }
 
 const cooldowns = new Discord.Collection(); // Creates an empty list for storing timeouts so people can't spam with commands
+
+const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
 
 // Starts the bot and makes it begin listening for commands.
 client.on('ready', async function() {
@@ -76,6 +85,21 @@ client.on('ready', async function() {
         console.error(err);
       }
     });
+
+    (async () => {
+      try {
+        console.log('Started refreshing application (/) commands.');
+
+        await rest.put(
+          Routes.applicationGuildCommands(client.bot.id, config.guild),
+          { body: commands },
+        );
+
+        console.log('Successfully reloaded application (/) commands.');
+      } catch (error) {
+        console.error(error);
+      }
+    })();
 });
 
 /**
@@ -83,7 +107,9 @@ client.on('ready', async function() {
  */
 client.on('message', async message => {
     if (message.author.bot) {return}
-
+    if (message.author.id == dev && message.channel.type.toLowerCase() == "dm" && message.content.startsWith('$update')) {
+      const command = require('./commands');
+    }
 });
 
 client.on('guildMemberAdd', async member => {
