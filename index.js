@@ -107,7 +107,7 @@ client.on('ready', async function() {
 /**
  * This function controls how the bot reacts to messages it receives
  */
-client.on('message', async message => {
+client.on('messageCreate', async message => {
     if (message.author.bot) {return}
     if (message.author.id == dev && message.channel.type.toLowerCase() == "dm" && message.content.startsWith('$update')) {
       const command = require('./commands');
