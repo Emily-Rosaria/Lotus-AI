@@ -6,7 +6,7 @@ module.exports = {
     name: 'help',
     description: 'List all available commands, or info about a specific command.',
     aliases: ['commands','info'],
-    perms: false, //no user-based restrictions
+    perms: 'dev', //no user-based restrictions
     usage: '<command name>',
     cooldown: 5,
     allowDM: true,

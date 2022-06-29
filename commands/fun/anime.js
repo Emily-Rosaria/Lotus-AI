@@ -4,30 +4,51 @@
  */
 const Discord = require('discord.js'); // Image embed
 const Booru = require('booru'); // This lets me get stuff from weeb sites.
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
+const data = new SlashCommandBuilder()
+	.setName("anime")
+	.setDescription('Get random anime pics from safebooru!')
+  .setDefaultMemberPermissions(3072) // read messages & send messages perms
+  .addStringOption(option =>
+		option.setName('tag1')
+			.setDescription('The first image tag to look for.')
+			.setRequired(false))
+  .addStringOption(option =>
+		option.setName('tag2')
+			.setDescription('The second image tag to look for.')
+			.setRequired(false))
+  .addStringOption(option =>
+		option.setName('tag3')
+			.setDescription('The third image tag to look for.')
+			.setRequired(false))
+  .addStringOption(option =>
+		option.setName('tag4')
+			.setDescription('The fourth image tag to look for.')
+			.setRequired(false))
+  .addStringOption(option =>
+    option.setName('tag5')
+      .setDescription('The fifth image tag to look for.')
+      .setRequired(false))
 
 module.exports = {
     name: 'anime', // The name of the command
+    data: data,
     description: 'Get random anime pics from safebooru!', // The description of the command (for help text)
-    args: false, // Specified that this command doesn't need any data other than the command
-    allowDM: true,
-    perms: 'verified', //restricts to users with the "verifed" role noted at config.json
-    usage: '[image-tag 1] [image-tag 2] [...]', // Help text to explain how to use the command (if it had any arguments)
-    execute(message, args) {
+    execute(message) {
         // Get image from the api.
-        let tags = args.length > 0 ? args : [];
-        if (tags.length > 3) {
-          tags = tags.slice(0,3);
-        }
+
+        const tags = [message.options.getString('tag1'),message.options.getString('tag2'),message.options.getString('tag3'),message.options.getString('tag4'),message.options.getString('tag5')].filter(t => t).map(t => t.toLowerCase().replace(/ +/g,"_"))
+
         Booru.search('safebooru', tags, { limit: 1, random: true }).then(image =>{
           const embed = new Discord.MessageEmbed()
           .setColor('#2e51a2')
           .setImage(image[0].fileUrl)
-          .setFooter('Image from safebooru')
+          .setFooter('Image from safebooru: '+tags.join(', '))
           .setTimestamp()
-          return message.reply(embed);
+          return message.reply({embeds: [embed]});
         })
         .catch(error => {
-          message.reply('Unable to fetch an image. Try again in a few minutes.');
+          return message.reply({content:"Unable to fetch an image. Most likely, your search yielded no results or there was a connection error. Try again in a few minutes.",ephemeral: true});
         });
     },
-};

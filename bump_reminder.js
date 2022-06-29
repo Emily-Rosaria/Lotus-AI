@@ -1,0 +1,62 @@
+const Discord = require('discord.js'); // Loads the discord API library
+
+const guildID = '892995500180131870';
+const channelID = '892995501627154450';
+const roleID = '991117888146640896';
+
+module.exports = async function (client) {
+  return;
+
+  const now = new Date();
+  const oneHour = 1000*60*60;
+
+  var lastBumps = client.bumpPings;
+  var latest = 0;
+  var repeat = false;
+  lastBumps.forEach((timestamp, uID) => {
+    if (latest < timestamp) {
+      latest = timestamp;
+      if (uID == "0") {
+        repeat = true;
+      } else {
+        repeat = false;
+      }
+    }
+  });
+
+  if (now.getTime() - latest < 2*oneHour) {
+    return; // recent bump
+  }
+
+  var guild = await client.guilds.resolve(guildID);
+  var channel = await guild.channels.resolve(channelID);
+
+  var ping = [];
+  lastBumps.forEach((timestamp, uID) => {
+    // keep
+    if (uID == "0") {
+      return;
+    }
+    if (now.getTime() - timestamp < 5*oneHour) {
+      if (!repeat) {
+        const member = guild.members.resolve(uID);
+        if(member && [...member.roles.cache.keys()].includes(roleID)) {
+          ping.push(uID);
+        }
+      }
+    // drop
+    } else {
+      client.bumpPings.delete(uID);
+    }
+  });
+
+  // make next reminder be in 1 hour unless someone bumps sooner
+  client.bumpPings.set("0",now.getTime() - oneHour);
+  const pingText = ping.length > 0 ? "<@" + ping.join(">, <@") + ">" : "";
+  await channel.send({
+    content:`${pingText}\nRemember to bump the server with the \`/bump\` command. If you'd like to be pinged and reminded to do this, opt-in to the <@&${roleID}> role over at <#892995501396475977>.`,
+    allowedMentions: {
+      parse:["users"]
+    }
+  });
+};

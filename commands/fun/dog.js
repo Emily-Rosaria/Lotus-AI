@@ -4,15 +4,16 @@
  */
 const Discord = require('discord.js'); // Image embed
 const fetch = require('node-fetch'); // This lets me get stuff from api.
+const data = new SlashCommandBuilder()
+	.setName("dog")
+	.setDescription('Get random dog pics!')
+  .setDefaultMemberPermissions(3072) // read messages & send messages perms
 
 module.exports = {
     name: 'dog', // The name of the command
     description: 'Get random dog pics!', // The description of the command (for help text)
-    args: false, // Specified that this command doesn't need any data other than the command
-    perms: 'verified', //restricts to users with the "verifed" role noted at config.json
-    allowDM: true,
-    usage: '', // Help text to explain how to use the command (if it had any arguments)
-    async execute(message, args) {
+    data: data,
+    async execute(message) {
 
       // Get dog from the api.
       const fetched = await fetch('https://dog.ceo/api/breeds/image/random').then(response => response.json());
@@ -22,9 +23,9 @@ module.exports = {
       }
       if (url) {
         const embed = new Discord.MessageEmbed().setImage(url).setTitle('Woof').setFooter('Source: dog.ceo/api').setTimestamp();
-        message.reply(embed); // Replies to the user with a random dog
+        message.reply({embeds: [embed]}); // Replies to the user with a random dog
       } else {
-        message.reply("I'm having trouble fetching images from the `dog.ceo` API right now. Try again in a moment.");
+        message.reply({content:"I'm having trouble fetching images from the `dog.ceo` API right now. Try again in a moment.",ephemeral: true});
       }
     },
 };
