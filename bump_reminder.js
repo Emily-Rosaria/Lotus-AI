@@ -5,8 +5,6 @@ const channelID = '892995501627154450';
 const roleID = '991117888146640896';
 
 module.exports = async function (client) {
-  return;
-
   const now = new Date();
   const oneHour = 1000*60*60;
 

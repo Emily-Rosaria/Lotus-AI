@@ -63,6 +63,10 @@ for (const file of commandFiles) {
 
 const cooldowns = new Discord.Collection(); // Creates an empty list for storing timeouts so people can't spam with commands
 
+// creates a list of people to ping for bump reminders
+client.bumpPings = new Discord.Collection();
+client.bumpPings.set("0",(new Date()).getTime());
+
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
 // Starts the bot and makes it begin listening for commands.
