@@ -15,7 +15,7 @@ module.exports = {
     cooldown: 5,
     description: 'Get random dog pics!', // The description of the command (for help text)
     data: data,
-    async execute(message) {
+    async execute(interaction) {
 
       // Get dog from the api.
       const fetched = await fetch('https://dog.ceo/api/breeds/image/random').then(response => response.json());
@@ -25,9 +25,9 @@ module.exports = {
       }
       if (url) {
         const embed = new Discord.MessageEmbed().setImage(url).setTitle('Woof').setFooter({ text:'Source: dog.ceo/api'}).setTimestamp();
-        message.reply({embeds: [embed]}); // Replies to the user with a random dog
+        interaction.reply({embeds: [embed]}); // Replies to the user with a random dog
       } else {
-        message.reply({content:"I'm having trouble fetching images from the `dog.ceo` API right now. Try again in a moment.",ephemeral: true});
+        interaction.reply({content:"I'm having trouble fetching images from the `dog.ceo` API right now. Try again in a moment.",ephemeral: true});
       }
     },
 };

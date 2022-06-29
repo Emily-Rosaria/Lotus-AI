@@ -16,14 +16,15 @@ module.exports = {
     description: 'Sets the bot\'s game status!', // The description of the command (for help text)
     cooldown: 10,
     usage: '[status]', // Help text to explain how to use the command (if it had any arguments)
-    execute(message) {
+    execute(interaction) {
       var status = { status: 'online' };
-      var args = message.options.getString('status').trim();
+      var args = interaction.options.getString('status').trim();
+      let gameName;
       if (args && args.length > 0) {
         const gameName = args.length > 31 ? args.slice(0,30) + '...' : args;
         status.activity = { type: 'PLAYING', name: gameName };
       }
-      message.client.user.setPresence(status);
+      interaction.client.user.setPresence(status);
       if (gameName && gameName.length > 0) {
         return interaction.reply({content:`Done! ${client.user.username}'s status has been set to \`${gameName}\`.'`,ephemeral: true});
       }

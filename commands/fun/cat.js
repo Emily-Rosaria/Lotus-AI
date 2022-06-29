@@ -15,10 +15,10 @@ module.exports = {
     cooldown: 5,
     description: 'Get random cat pics!', // The description of the command (for help text)
     data: data,
-    async execute(message) {
+    async execute(interaction) {
         // Get cat from the random.cat api.
         const { file } = await fetch('https://aws.random.cat/meow').then(response => response.json());
         const embed = new Discord.MessageEmbed().setImage(file).setTitle('Cat').setFooter({ text:'Source: aws.random.cat'}).setTimestamp();
-        message.reply({embeds: [embed]}); // Replies to the user with a random cat
+        interaction.reply({embeds: [embed]}); // Replies to the user with a random cat
     },
 };

@@ -35,10 +35,10 @@ module.exports = {
     data: data,
     cooldown: 5,
     description: 'Get random anime pics from safebooru!', // The description of the command (for help text)
-    execute(message) {
+    execute(interaction) {
         // Get image from the api.
 
-        const tags = [message.options.getString('tag1'),message.options.getString('tag2'),message.options.getString('tag3'),message.options.getString('tag4'),message.options.getString('tag5')].filter(t => t).map(t => t.toLowerCase().replace(/ +/g,"_"))
+        const tags = [interaction.options.getString('tag1'),interaction.options.getString('tag2'),interaction.options.getString('tag3'),interaction.options.getString('tag4'),interaction.options.getString('tag5')].filter(t => t).map(t => t.toLowerCase().replace(/ +/g,"_"))
 
         Booru.search('safebooru', tags, { limit: 1, random: true }).then(image =>{
           const embed = new Discord.MessageEmbed()
@@ -46,10 +46,10 @@ module.exports = {
           .setImage(image[0].fileUrl)
           .setFooter({ text:'Image from safebooru: '+tags.join(', ')})
           .setTimestamp()
-          return message.reply({embeds: [embed]});
+          return interaction.reply({embeds: [embed]});
         })
         .catch(error => {
-          return message.reply({content:"Unable to fetch an image. Most likely, your search yielded no results or there was a connection error. Try again in a few minutes.",ephemeral: true});
+          return interaction.reply({content:"Unable to fetch an image. Most likely, your search yielded no results or there was a connection error. Try again in a few minutes.",ephemeral: true});
         });
     },
 }
