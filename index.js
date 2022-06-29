@@ -34,7 +34,7 @@ botIntents.add(Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_VOICE_S
 
 const client = new Discord.Client({intents: botIntents, partials: ["CHANNEL"], allowedMentions: { parse: ['users', 'roles'], repliedUser: true}}); // Initiates the client
 
-client.slashCommands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
+client.commands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
 const getAllCommands = function (dir, cmds) {
   files = fs.readdirSync(dir, { withFileTypes: true });
   fileArray = cmds || [];
@@ -55,7 +55,7 @@ const commands = [];
 // Loops over each file in the command folder and sets the commands to respond to their name
 for (const file of commandFiles) {
     const command = require(file);
-    client.slashCommands.set(command.name, command);
+    client.commands.set(command.name, command);
     if (command.data) {
       commands.push(command.data.toJSON());
     }
@@ -128,16 +128,15 @@ client.on('guildMemberRemove', async member => {
 
 client.on('interactionCreate', async interaction => {
   if (!interaction.isCommand()) return;
-  const command = client.slashCommands.get(interaction.commandName);
+  const command = client.commands.get(interaction.commandName);
   if (!command) return;
-
   if (!cooldowns.has(command.name)) {
-    cooldowns.set(command.name, new Collection());
+    cooldowns.set(command.name, new Discord.Collection());
   }
 
   const now = Date.now();
   const timestamps = cooldowns.get(command.name);
-  const cooldownAmount = (command.cooldown || 1) * 1000;
+  const cooldownAmount = (command.cooldown || 3) * 1000;
 
   if (timestamps.has(interaction.member.id)) {
     const expirationTime = timestamps.get(interaction.member.id) + cooldownAmount;
@@ -147,11 +146,10 @@ client.on('interactionCreate', async interaction => {
       return await interaction.reply({ content: `Whoa! You're sending commands too fast! Please wait ${timeLeft.toFixed(1)} more second(s) before running \`${command.name}\` again!`, ephemeral: true});
     }
   }
-
   timestamps.set(interaction.member.id, now);
   setTimeout(() => timestamps.delete(interaction.member.id), cooldownAmount);
   try {
-      await command.execute(interaction,[]);
+      await command.execute(interaction);
   } catch (error) {
       if (error) console.error(error);
       await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });

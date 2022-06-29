@@ -9,14 +9,12 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const data = new SlashCommandBuilder()
 	.setName("cat")
 	.setDescription('Get random cat pics!')
-  .setDefaultMemberPermissions(3072) // read messages & send messages perms
 
 module.exports = {
     name: 'cat', // The name of the command
     description: 'Get random cat pics!', // The description of the command (for help text)
     data: data,
     async execute(message) {
-
         // Get cat from the random.cat api.
         const { file } = await fetch('https://aws.random.cat/meow').then(response => response.json());
         const embed = new Discord.MessageEmbed().setImage(file).setTitle('Cat').setFooter({ text:'Source: aws.random.cat'}).setTimestamp();

@@ -9,7 +9,6 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const data = new SlashCommandBuilder()
 	.setName("anime")
 	.setDescription('Get random anime pics from safebooru!')
-  .setDefaultMemberPermissions(3072) // read messages & send messages perms
   .addStringOption(option =>
 		option.setName('tag1')
 			.setDescription('The first image tag to look for.')

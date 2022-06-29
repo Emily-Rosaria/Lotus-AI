@@ -9,7 +9,6 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const data = new SlashCommandBuilder()
 	.setName("dog")
 	.setDescription('Get random dog pics!')
-  .setDefaultMemberPermissions(3072) // read messages & send messages perms
 
 module.exports = {
     name: 'dog', // The name of the command
