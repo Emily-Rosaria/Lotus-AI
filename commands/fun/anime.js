@@ -52,3 +52,4 @@ module.exports = {
           return message.reply({content:"Unable to fetch an image. Most likely, your search yielded no results or there was a connection error. Try again in a few minutes.",ephemeral: true});
         });
     },
+}

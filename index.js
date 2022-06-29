@@ -13,7 +13,7 @@ app.listen(port, () => console.log(`Example app listening at http://localhost:${
 
 const fetch = require('node-fetch'); // This lets me get stuff from api.
 const Booru = require('booru'); // This lets me get stuff from weeb sites.
-const { fs, readdirSync } = require('fs');                               // Loads the Filesystem library
+const fs = require('fs');                               // Loads the Filesystem library
 const { path, join } = require("path");
 const Discord = require('discord.js');                  // Loads the discord API library
 const readline = require('readline');
@@ -63,7 +63,7 @@ for (const file of commandFiles) {
 
 const cooldowns = new Discord.Collection(); // Creates an empty list for storing timeouts so people can't spam with commands
 
-const rest = new REST({ version: '9' }).setToken(process.env.TOKEN);
+const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
 // Starts the bot and makes it begin listening for commands.
 client.on('ready', async function() {
@@ -93,7 +93,7 @@ client.on('ready', async function() {
         console.log('Started refreshing application (/) commands.');
 
         await rest.put(
-          Routes.applicationGuildCommands(client.bot.id, config.guild),
+          Routes.applicationGuildCommands(client.user.id, config.guild),
           { body: commands },
         );
 

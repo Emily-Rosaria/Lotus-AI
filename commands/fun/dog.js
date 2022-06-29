@@ -4,6 +4,8 @@
  */
 const Discord = require('discord.js'); // Image embed
 const fetch = require('node-fetch'); // This lets me get stuff from api.
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
 const data = new SlashCommandBuilder()
 	.setName("dog")
 	.setDescription('Get random dog pics!')

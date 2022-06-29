@@ -16,7 +16,7 @@ module.exports = async function (client) {
     fs.readFile("prune_temp.txt", "utf-8", (err, data) => {
         if (err) { console.log(err) }
         if (data) {
-          channel.fetch()
+          channel.fetch(data.trim())
           .then(message => message.delete())
           .catch(console.error);
         }
