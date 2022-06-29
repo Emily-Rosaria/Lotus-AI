@@ -18,10 +18,10 @@ module.exports = {
     usage: '[status]', // Help text to explain how to use the command (if it had any arguments)
     execute(interaction) {
       var status = { status: 'online' };
-      var args = interaction.options.getString('status').trim();
-      let gameName;
-      if (args && args.length > 0) {
-        const gameName = args.length > 31 ? args.slice(0,30) + '...' : args;
+      var gameName = interaction.options.getString('status');
+			gameName = gameName ? gameName.trim() : gameName;
+      if (gameName && gameName.length > 0) {
+        gameName = gameName.length > 31 ? gameName.slice(0,30) + '...' : gameName;
         status.activities = [{ type: 'PLAYING', name: gameName }];
       }
       interaction.client.user.setPresence(status);
