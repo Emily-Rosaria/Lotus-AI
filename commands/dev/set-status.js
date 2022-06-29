@@ -22,12 +22,12 @@ module.exports = {
       let gameName;
       if (args && args.length > 0) {
         const gameName = args.length > 31 ? args.slice(0,30) + '...' : args;
-        status.activity = { type: 'PLAYING', name: gameName };
+        status.activities = [{ type: 'PLAYING', name: gameName }];
       }
       interaction.client.user.setPresence(status);
       if (gameName && gameName.length > 0) {
-        return interaction.reply({content:`Done! ${client.user.username}'s status has been set to \`${gameName}\`.'`,ephemeral: true});
+        return interaction.reply({content:`Done! ${interaction.client.user.username}'s status has been set to \`${gameName}\`.'`,ephemeral: true});
       }
-      return interaction.reply({content:`Done! ${client.user.username}'s status has been reset.`,ephemeral: true});
+      return interaction.reply({content:`Done! ${interaction.client.user.username}'s status has been reset.`,ephemeral: true});
     },
 };

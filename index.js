@@ -110,7 +110,7 @@ client.on('ready', async function() {
 client.on('messageCreate', async message => {
     if (message.author.bot) {return}
     if (message.author.id == dev && message.channel.type.toLowerCase() == "dm" && message.content.startsWith('$update')) {
-      const command = require('./commands/update.js');
+      const command = require('./commands/dev/update.js');
       command.execute(message);
     }
 });
