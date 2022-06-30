@@ -46,7 +46,7 @@ module.exports = {
 			}
 			cha.messages.fetch(messageID).then((m => {
 				let oldContent = m.content;
-				let newContent = m.replace(find,replace);
+				let newContent = oldContent.replace(find,replace);
 				m.edit({content:newContent}).then(m=>{
 					interaction.reply({content:`Message editted!`,ephemeral: true});
 				}).catch(e=> {
