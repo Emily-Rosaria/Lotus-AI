@@ -1,5 +1,4 @@
 const Discord = require('discord.js'); // Image embed
-const fetch = require('node-fetch'); // This lets me get stuff from api.
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 const data = new SlashCommandBuilder()
@@ -26,7 +25,7 @@ module.exports = {
       }
       interaction.client.user.setPresence(status);
       if (gameName && gameName.length > 0) {
-        return interaction.reply({content:`Done! ${interaction.client.user.username}'s status has been set to \`${gameName}\`.'`,ephemeral: true});
+        return interaction.reply({content:`Done! ${interaction.client.user.username}'s status has been set to \`${gameName}\`.`,ephemeral: true});
       }
       return interaction.reply({content:`Done! ${interaction.client.user.username}'s status has been reset.`,ephemeral: true});
     },
