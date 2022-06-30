@@ -33,7 +33,7 @@ module.exports = async function (client) {
       var lurkersArr = [];
       lurkers.each((lurker)=>{
         let dayCount = now.getTime() - lurker.joinedAt.getTime()) / oneDay;
-        if (dayCount > 1 && !lurker.roles.cache.has(unapproved_role)) {
+        if (dayCount > 1 && (!member.roles || !member.roles.hoist || !lurker.roles.cache.has(unapproved_role))) {
           lurker.kick("Didn't give age after one day."); // kick lurker if they haven't given their age yet
           return;
         }
@@ -53,7 +53,6 @@ module.exports = async function (client) {
         const data = ""+msg.id;
         fs.writeFile("prune_temp.txt", data, (err) => {
           if (err) console.log(err);
-          console.log("Successfully Written to File.");
         });
       }
     }).catch((err)=>console.error(err));
