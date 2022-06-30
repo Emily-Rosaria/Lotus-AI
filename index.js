@@ -112,9 +112,19 @@ client.on('ready', async function() {
  * This function controls how the bot reacts to messages it receives
  */
 client.on('messageCreate', async message => {
-    if (message.author.bot) {return}
+    // handle bumps
+    if (message.author.bot) {
+      if (message.channel.id == "892995501627154450" && message.author.id =="302050872383242240") {
+        if (message.interaction && message.interaction.commandName && message.interaction.commandName == "bump" && message.interaction.user && message.interaction.user.id) {
+          message.client.bumpPings.set(""+message.interaction.user.id,(new Date()).getTime());
+          message.react("👍");
+        }
+      }
+      return;
+    }
+    // handle update
     if (message.author.id == dev && message.channel.type.toLowerCase() == "dm" && message.content.startsWith('$update')) {
-      const command = require('./commands/dev/update.js');
+      const command = client.commands.get("update");
       command.execute(message);
     }
 });
