@@ -2,7 +2,7 @@ const Discord = require('discord.js'); // Loads the discord API library
 const fs = require("fs");
 
 const guildID = '892995500180131870';
-const verified_roles = ['892995500297580626'];
+const verified_roles = ['892995500297580626','992413959330218005'];
 const unapproved_role = '992059872218714112';
 const rejected_role = '991489138169745458'; // role for people who submitted something and/or were rejected
 const lurk_channel = '893008936381345802';

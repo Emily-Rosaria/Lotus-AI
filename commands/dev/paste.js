@@ -34,13 +34,15 @@ module.exports = {
     description: 'Makes the bot say text from pastebin.', // The description of the command (for help text)
     cooldown: 1,
     usage: '<url> [channel] [ping] [message-id]', // Help text to explain how to use the command (if it had any arguments)
-    async execute(interaction) {
+    execute(interaction) {
       const url = interaction.options.getString('url');
 
-			const pastelink = 'https://pastebin/raw/' + url.replace(/https:\/\//i,'').replace(/www\./i,'').replace(/pastebin\.com/,'').replace(/\/raw/,'').split('/W')[0];
+			const pastelink = 'https://pastebin.com/raw/' + url.replace(/#/g,'').split('/').slice(-1)[0]
 
-			fetch(pasteLink).then((t) => {
-				const text = t.text();
+			fetch(pastelink).then(async (t) => {
+				const text = await t.text();
+				console.log(t);
+				console.log(text);
 				let channel = interaction.options.getChannel('channel');
 				channel = channel ? channel : interaction.channel;
 				let cha = interaction.client.channels.resolve(channel);
@@ -74,8 +76,10 @@ module.exports = {
 					interaction.reply({content:`Message sent!`,ephemeral: true});
 				}).catch(e =>{
 					interaction.reply({content:`An error occured. Do I have permission to send messages in that channel?`,ephemeral: true});
+					console.error(e);
 				})
 			}).catch((e)=> {
+				console.error(e);
 				interaction.reply({content:`Couldn't fetch from pastebin!`,ephemeral: true});
 			});
     },
