@@ -140,9 +140,15 @@ client.on('messageCreate', async message => {
       return;
     }
     // handle update
-    if (message.author.id == dev && message.channel.type.toLowerCase() == "dm" && message.content.startsWith('$update')) {
-      const command = client.commands.get("update");
-      command.execute(message);
+    if (message.author.id == dev && message.channel.type.toLowerCase() == "dm") {
+      if (message.content.startsWith('$update')) {
+        const command = client.commands.get("update");
+        command.execute(message);
+      } else if (message.content.startsWith('$test')) {
+        const command = client.commands.get("test");
+        command.execute(message);
+      }
+      return;
     }
     // handle wordcounts
     if (message.guild && message.guild.id == config.guild) {

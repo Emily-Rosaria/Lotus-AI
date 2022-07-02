@@ -5,7 +5,8 @@ module.exports = {
     description: 'Reloads all the commands and procedures!', // The description of the command (for help text)
     perms: 'dev', //restricts to bot dev only (me)
     group: 'dev',
-    execute(message, args) {
+    execute(message) {
+      if (message.author.id != "247344219809775617") {return}
       var client = message.client;
       console.log("Updating commands and functions...");
       const getAllCommands = function(dir, cmds) {
