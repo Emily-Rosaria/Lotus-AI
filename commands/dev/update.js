@@ -44,6 +44,14 @@ module.exports = {
           }
       }
 
+      // Time to reset the event stuff!
+      const eventFunctions = fs.readdirSync('./events',{ withFileTypes: true }).filter((f)=>f.name.endsWith('.js'));
+      eventFunctions.forEach((eventF) => {
+        delete require.cache[require.resolve('./../../events/'+eventF.name)];
+        const event = require('./../../events/'+eventF.name);
+        client.events.set(event.name,event);
+      });
+
       console.log('Commands updated and cleaned! Now starting on misc functions.');
 
       // Reset cache of misc function

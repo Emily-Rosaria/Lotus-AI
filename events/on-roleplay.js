@@ -1,5 +1,6 @@
 const mongoose = require("mongoose"); //database library
 const Users = require("./../database/models/users.js"); // users model
+const Messages = require("./../database/models/messages.js"); // users model
 
 module.exports = {
   name: "onRoleplay",
