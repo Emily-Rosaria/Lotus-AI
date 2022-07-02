@@ -10,10 +10,10 @@ const data = new SlashCommandBuilder()
   .addUserOption(option => option.setName('user').setDescription('Select a user').setRequired(false))
 module.exports = {
     name: 'wordcount', // The name of the command
+		data: data,
     description: 'Rough information about a user\'s wordcount in the roleplay channels.', // The description of the command (for help text)
     group: 'roleplay',
     cooldown: 5,
-    usage: '[user]', // Help text to explain how to use the command (if it had any arguments)
     async execute(interaction) {
 			let user = interaction.options.getUser('user');
 			if (!user) {
