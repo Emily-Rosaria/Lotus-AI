@@ -25,9 +25,10 @@ module.exports = {
 		      return interaction.reply({content:"No roleplay data found for this user.",ephemeral: true});
 		    }
 				interaction.guild.members.fetch(userID).then((u) => {
-					const embed = new Discord.MessageEmbed().setThumbnail(u.displayAvatarURL()).setTitle(`${u.displayName}'s Wordcounts'`).setFooter({ text:`${u.user.tag}`}).setTimestamp().displayHexColor(u.displayHexColor).setDescription(`Total Words: \`${docs.totalWords}\`\nCharacter Count: \`${docs.totalChars}\``);
+					const embed = new Discord.MessageEmbed().setThumbnail(u.displayAvatarURL()).setTitle(`${u.displayName}'s Wordcounts`).setFooter({ text:`${u.user.tag}`}).setTimestamp().setColor(u.displayHexColor).setDescription(`Total Words: \`${docs.totalWords}\`\nCharacter Count: \`${docs.totalChars}\``);
 					interaction.reply({embeds: [embed]});
-				}).error((e) => {
+				}).catch((e) => {
+					console.error(e);
 					const embed = new Discord.MessageEmbed().setTitle('Unknown User\'s Wordcounts').setFooter({ text:`ID: ${userID}`}).setTimestamp().setDescription(`Total Words: \`${docs.totalWords}\`\nCharacter Count: \`${docs.totalChars}\``);
 					interaction.reply({embeds: [embed]});
 				})

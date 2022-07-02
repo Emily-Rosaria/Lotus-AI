@@ -25,6 +25,8 @@ const { Routes } = require('discord-api-types/v9');
 
 const dev = config.dev; // my ID on Discord
 
+const Users = require("./database/models/users.js"); // users model
+
 const mongoose = require("mongoose"); // database library
 const connectDB = require("./database/connectDB.js"); // local database connection
 var database = config.dbName; // Database name for the local database
@@ -126,6 +128,12 @@ client.on('messageCreate', async message => {
         if (message.interaction && message.interaction.commandName && message.interaction.commandName == "bump" && message.interaction.user && message.interaction.user.id) {
           message.client.bumpPings.set(""+message.interaction.user.id,(new Date()).getTime());
           message.react("👍");
+          // update user bump counts
+          Users.findOneAndUpdate({_id: message.author.id},{
+            "$inc": {
+              "bumps": 1
+            }
+          }, {upsert: true}).exec();
         }
       }
       // ignore all other bots
@@ -148,7 +156,7 @@ client.on('messageCreate', async message => {
     }
 });
 
-client.on('messageDelete', async message => {
+client.on('messageDelete', message => {
     if (message.author && message.author.bot) {return} // don't respond to bots
     client.events.get("onDelete").event(message);
 });
