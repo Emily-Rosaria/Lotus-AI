@@ -10,7 +10,7 @@ const data = new SlashCommandBuilder()
 			.setRequired(true))
   .addStringOption(option =>
 		option.setName('new-text')
-			.setDescription('The new text. Use \\n for line breaks.')
+			.setDescription('The new text.')
 			.setRequired(true))
 	.addStringOption(option =>
 		option.setName('message-id')

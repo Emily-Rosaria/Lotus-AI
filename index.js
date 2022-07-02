@@ -32,7 +32,7 @@ var database = config.dbName; // Database name for the local database
 const botIntents = new Discord.Intents();
 botIntents.add(Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_VOICE_STATES, Discord.Intents.FLAGS.GUILD_MEMBERS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Discord.Intents.FLAGS.GUILD_MESSAGE_TYPING, Discord.Intents.FLAGS.DIRECT_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Discord.Intents.FLAGS.DIRECT_MESSAGE_TYPING);
 
-const client = new Discord.Client({intents: botIntents, partials: ["CHANNEL"], allowedMentions: { parse: ['users', 'roles'], repliedUser: true}}); // Initiates the client
+const client = new Discord.Client({intents: botIntents, partials: ["CHANNEL","MESSAGE"], allowedMentions: { parse: ['users', 'roles'], repliedUser: true}}); // Initiates the client
 
 client.commands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
 const getAllCommands = function (dir, cmds) {
@@ -59,6 +59,14 @@ for (const file of commandFiles) {
     if (command.data) {
       commands.push(command.data.toJSON());
     }
+}
+
+// load the core events into client
+client.events = new Discord.Collection();
+const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+for (const file of eventFiles) {
+    const event = require(`./events/${file}`);
+    client.events.set(event.name, event);
 }
 
 const cooldowns = new Discord.Collection(); // Creates an empty list for storing timeouts so people can't spam with commands
@@ -120,12 +128,47 @@ client.on('messageCreate', async message => {
           message.react("👍");
         }
       }
+      // ignore all other bots
       return;
     }
     // handle update
     if (message.author.id == dev && message.channel.type.toLowerCase() == "dm" && message.content.startsWith('$update')) {
       const command = client.commands.get("update");
       command.execute(message);
+    }
+    // handle wordcounts
+    if (message.guild && message.guild.id == config.guild) {
+      let c = message.channel;
+      if (c.isThread()) {
+        c = c.parent
+      }
+      if (c.parentId && Object.keys(config.rpChannels).includes(""+c.parentId) && config.rpChannels[""+c.parentId] != c.id) {
+        client.events.get("onRoleplay").event(message);
+      }
+    }
+});
+
+client.on('messageDelete', async message => {
+    if (message.author && message.author.bot) {return} // don't respond to bots
+    client.events.get("onDelete").event(message);
+});
+
+client.on('messageUpdate', async (oldMessage, newMessage) => {
+    if (newMessage.author && newMessage.author.bot) {return} // don't respond to bots
+    // handle wordcounts
+    try {
+      if (newMessage.guild && newMessage.guild.id == config.guild) {
+        let c = newMessage.channel;
+        if (c.isThread()) {
+          c = c.parent
+        }
+        if (c.parentId && Object.keys(config.rpChannels).includes(""+c.parentId) && config.rpChannels[""+c.parentId] != c.id) {
+          client.events.get("onEdit").event(oldMessage, newMessage);
+        }
+      }
+    } catch (e) {
+      //errorr
+      console.error(e);
     }
 });
 
