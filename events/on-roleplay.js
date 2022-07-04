@@ -15,14 +15,14 @@ module.exports = {
     cleanMSG = cleanMSG.replace(/\p{M}+/,''); // remove zalgo text ("mark characters")
     const chars = cleanMSG.length;
     const words = chars == 0 ? 0 : cleanMSG.split(/\s+/).length;
-    await Messages.create({
+    await Messages.findOneAndUpdate({
       _id: message.id,
       author: message.author.id,
       channel: message.channel.id,
       wordCount: words,
       charCount: chars,
       timestamp: message.createdAt.getTime()
-    });
+    }, {upsert: true}).exec();
 
     if (chars == 0) {
       return;
