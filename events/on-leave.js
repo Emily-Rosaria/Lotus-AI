@@ -5,7 +5,7 @@ const Characters = require("./../database/models/characters.js"); // users model
 module.exports = {
   name: "onLeave",
   async event(member) {
-    await posts = Characters.find({author: member.user.id}).exec();
+    posts = await Characters.find({author: member.user.id}).exec();
     if (!posts || posts.length == 0) {
       return;
     }
