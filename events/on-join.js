@@ -6,7 +6,7 @@ function yeet(member, message, reason, leeway) {
   if (leeway) {
     member.client.automods.set(member.user.id,(new Date()).getTime()+leeway);
   }
-  member.user.send(message).then(msg=> {member.ban(reason)}).catch(msg=> {member.ban(reason)});
+  member.user.send(message).then(msg=> {member.kick(reason)}).catch(msg=> {member.kick(reason)});
 }
 
 module.exports = {
