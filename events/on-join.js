@@ -5,6 +5,7 @@ const oneDay = oneHour * 24; // one day in milliseconds
 function yeet(member, message, reason, leeway) {
   if (leeway) {
     member.client.automods.set(member.user.id,(new Date()).getTime()+leeway);
+    setTimeout(() => member.client.automods.delete(member.user.id), leeway);
   }
   member.user.send(message).then(msg=> {member.kick(reason)}).catch(msg=> {member.kick(reason)});
 }
