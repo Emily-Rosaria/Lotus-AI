@@ -73,6 +73,8 @@ for (const file of eventFiles) {
 
 const cooldowns = new Discord.Collection(); // Creates an empty list for storing timeouts so people can't spam with commands
 
+client.automods = new Discord.Collection();
+
 // creates a list of people to ping for bump reminders
 client.bumpPings = new Discord.Collection();
 client.bumpPings.set("0",(new Date()).getTime());
@@ -158,17 +160,21 @@ client.on('messageCreate', async message => {
       }
       if (c.parentId && Object.keys(config.rpChannels).includes(""+c.parentId) && config.rpChannels[""+c.parentId] != c.id) {
         client.events.get("onRoleplay").event(message);
+      } else if (c.id == config.introChannel || Object.keys(config.characterChannels).includes(""+c.id)) {
+        client.events.get("onCharacter").event(message);
       }
     }
 });
 
 client.on('messageDelete', message => {
     if (message.author && message.author.bot) {return} // don't respond to bots
+    if (message.guild.id != config.guild) {return}
     client.events.get("onDelete").event(message);
 });
 
 client.on('messageUpdate', async (oldMessage, newMessage) => {
     if (newMessage.author && newMessage.author.bot) {return} // don't respond to bots
+    if (newMessage.guild.id != config.guild) {return}
     // handle wordcounts
     try {
       if (newMessage.guild && newMessage.guild.id == config.guild) {
@@ -187,15 +193,13 @@ client.on('messageUpdate', async (oldMessage, newMessage) => {
 });
 
 client.on('guildMemberAdd', async member => {
-
-  //Join message
-
+  if (member.guild.id != config.guild) {return}
+  client.events.get("onJoin").event(member);
 });
 
 client.on('guildMemberRemove', async member => {
-
-  //leave message
-
+  if (member.guild.id != config.guild) {return}
+  client.events.get("onLeave").event(member);
 });
 
 client.on('interactionCreate', async interaction => {

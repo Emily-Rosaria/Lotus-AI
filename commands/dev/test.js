@@ -13,6 +13,13 @@ module.exports = {
     perms: 'dev', //restricts to bot dev only (me)
     group: 'dev',
     async execute(message) {
+      const prune = require('./../../guild_auto_prune.js');
+      try {
+        prune(message.client);
+      } catch (e) {
+        console.error(e)
+      }
+      return;
       await Users.deleteMany({}).exec();
       await Messages.deleteMany({}).exec();
       return;
