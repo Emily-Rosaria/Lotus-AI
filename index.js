@@ -193,11 +193,13 @@ client.on('messageUpdate', async (oldMessage, newMessage) => {
 });
 
 client.on('guildMemberAdd', async member => {
+  if (member.author && member.bot) {return} // don't respond to bots
   if (member.guild.id != config.guild) {return}
   client.events.get("onJoin").event(member);
 });
 
 client.on('guildMemberRemove', async member => {
+  if (member.author && member.bot) {return} // don't respond to bots
   if (member.guild.id != config.guild) {return}
   client.events.get("onLeave").event(member);
 });
