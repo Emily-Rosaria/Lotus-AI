@@ -15,7 +15,7 @@ module.exports = async function (client) {
 
     // delete old reminder
     await fs.readFile("prune_temp.txt", "utf-8", (err, data) => {
-      if (err) { console.log(err) }
+      if (err) { console.error(err) }
       if (data) {
         channel.messages.fetch(data.trim())
         .then(message => message.delete())
@@ -43,7 +43,6 @@ module.exports = async function (client) {
           lurker.kick("Inactivity. Joined over a week ago."); // kick lurker if no recent submission attempt was made
           return;
         }
-        console.log([lurker.user.id,dayCount,"lurking"])
         lurkersArr.push(lurker.user.id); // lurkers to warn about a kick, those who submitted something recently aren't warned
         return;
       });
@@ -52,10 +51,9 @@ module.exports = async function (client) {
         channel.send({content: reminder}).then(msg => {
           const data = ""+msg.id;
           fs.writeFile("prune_temp.txt", data, (err) => {
-            if (err) console.log(err);
+            if (err) console.error(err);
           });
         }).catch(console.error)
       }
     }).catch(console.error);
 };
-993660499470331990
