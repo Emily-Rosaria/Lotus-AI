@@ -168,16 +168,16 @@ client.on('messageCreate', async message => {
 
 client.on('messageDelete', message => {
     if (message.author && message.author.bot) {return} // don't respond to bots
-    if (message.guild.id != config.guild) {return}
+    if (!message.guild || message.guild.id != config.guild) {return}
     client.events.get("onDelete").event(message);
 });
 
 client.on('messageUpdate', async (oldMessage, newMessage) => {
     if (newMessage.author && newMessage.author.bot) {return} // don't respond to bots
-    if (newMessage.guild.id != config.guild) {return}
+    if (!newMessage.guild || newMessage.guild.id != config.guild) {return}
     // handle wordcounts
     try {
-      if (newMessage.guild && newMessage.guild.id == config.guild) {
+      if (newMessage.guild.id == config.guild) {
         let c = newMessage.channel;
         if (c.isThread()) {
           c = c.parent
