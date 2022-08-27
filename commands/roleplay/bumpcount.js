@@ -29,7 +29,7 @@ module.exports = {
 					interaction.reply({embeds: [embed]});
 				}).catch((e) => {
 					console.error(e);
-					const embed = new Discord.MessageEmbed().setTitle('Unknown User\'s Wordcounts').setFooter({ text:`ID: ${userID}`}).setTimestamp().setDescription(`Total Bumps: \`${docs.bumps}\``);
+					const embed = new Discord.MessageEmbed().setTitle('Unknown User\'s Bump Count').setFooter({ text:`ID: ${userID}`}).setTimestamp().setDescription(`Total Bumps: \`${docs.bumps}\``);
 					interaction.reply({embeds: [embed]});
 				})
 			});
