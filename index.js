@@ -131,7 +131,7 @@ client.on('messageCreate', async message => {
           message.client.bumpPings.set(""+message.interaction.user.id,(new Date()).getTime());
           message.react("👍");
           // update user bump counts
-          Users.findOneAndUpdate({_id: message.author.id},{
+          await Users.findOneAndUpdate({_id: message.interaction.user.id},{
             "$inc": {
               "bumps": 1
             }
