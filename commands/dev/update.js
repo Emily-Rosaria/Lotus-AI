@@ -1,3 +1,6 @@
+require('dotenv').config(); //for .env file
+
+
 const fs = require('fs');
 const config = require('./../../config.json'); // load bot config
 const { REST } = require('@discordjs/rest');
@@ -11,6 +14,7 @@ module.exports = {
     group: 'dev',
     execute(message) {
       if (message.author.id != "247344219809775617") {return}
+      const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
       var client = message.client;
       console.log("Updating commands and functions...");
       const getAllCommands = function(dir, cmds) {
