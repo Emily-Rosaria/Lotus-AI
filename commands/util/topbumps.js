@@ -98,19 +98,19 @@ module.exports = {
 			currentPage = currentPage - 1;
 
 			// post leaderboard embed
-			var msg = await message.channel.send({embeds: [getEmbed(currentPage)]});
+			var msg = await interaction.reply({embeds: [getEmbed(currentPage)]});
 
 			// don't add reacts or anything if there's no other pages
 			if (pagecount < 2) {
 				return;
 			}
 
-			await msg.react('⬅️').then(()=>msg.react('➡️')).catch(()=>message.reply("Failed to post the full leaderboard. Do I have permission to add reactions and post embeds in this channel?"));
+			await msg.react('⬅️').then(()=>msg.react('➡️')).catch(()=>msg.reply("Failed to post the full leaderboard. Do I have permission to add reactions and post embeds in this channel?"));
 
 			let cooldown = 0;
 
 			const filter = (r, u) => {
-				if (!(['⬅️', '➡️'].includes(r.emoji.name) && u.id === message.author.id)) {return false}
+				if (!(['⬅️', '➡️'].includes(r.emoji.name) && u.id === interaction.user.id)) {return false}
 				if (cooldown + 400 > (new Date()).getTime()) {return false}
 				if (r.message.id != msg.id) {return false;}
 				cooldown = (new Date()).getTime();
