@@ -199,12 +199,20 @@ module.exports = {
 			collector.on('collect', async (i) => {
 				if (i.customId.endsWith('left')) {currentPage = await left(currentPage,i)}
 				if (i.customId.endsWith('right')) {currentPage = await right(currentPage,i)}
+        console.log(currentPage);
 				//collector.dispose(i);
 			});
 
 			collector.on('end', collected => {
+        buttonRight.setDisabled(true)
+        buttonLeft.setDisabled(true)
+        const noButtons = new MessageActionRow()
+				.addComponents(
+					buttonLeft,
+					buttonRight
+				);
 				collected.first().message.edit({
-		    components: [buttons.map(c => c.setDisabled(true))]
+		        components: [noButtons]
 		  	});
 			});
     },
