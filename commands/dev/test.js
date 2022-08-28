@@ -15,6 +15,8 @@ module.exports = {
     async execute(message) {
       if (message.author.id != "247344219809775617") {return}
 
+      //Users.deleteOne({_id:"302050872383242240"});
+
       return message.reply("Write code bitch, yeet.");
 
       const client = message.client;

@@ -150,7 +150,7 @@ module.exports = {
 
       const msg = await interaction.fetchReply();
 
-			const collector = msg.createMessageComponentCollector({ filter, componentType: "BUTTON", idle: 30000 });
+			const collector = msg.createMessageComponentCollector({ filter, componentType: "BUTTON", idle: 300000 });
 
 			const right = async (pg,i) => {
 				let newPage =  Math.min(pg+1,pagecount-1);
@@ -170,7 +170,7 @@ module.exports = {
 					buttonLeft,
 					buttonRight
 				);
-				await i.update({embeds: [getEmbed(currentPage)],components: [newButtons]});
+				await i.update({embeds: [getEmbed(newPage)],components: [newButtons]});
 				return newPage;
 			}
 
@@ -192,14 +192,13 @@ module.exports = {
 					buttonLeft,
 					buttonRight
 				);
-				await i.update({embeds: [getEmbed(currentPage)],components: [newButtons]});
+				await i.update({embeds: [getEmbed(newPage)],components: [newButtons]});
 				return newPage;
 			}
 
 			collector.on('collect', async (i) => {
 				if (i.customId.endsWith('left')) {currentPage = await left(currentPage,i)}
 				if (i.customId.endsWith('right')) {currentPage = await right(currentPage,i)}
-        console.log(currentPage);
 				//collector.dispose(i);
 			});
 
