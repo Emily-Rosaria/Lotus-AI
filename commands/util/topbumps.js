@@ -153,7 +153,7 @@ module.exports = {
 			const collector = msg.createMessageComponentCollector({ filter, componentType: "BUTTON", idle: 30000 });
 
 			const right = async (pg,i) => {
-				let newPage =  (((pg+1) % pagecount ) + pagecount ) % pagecount;
+				let newPage =  Math.min(pg+1,pagecount-1);
 				embed = getEmbed(newPage);
         if (newPage == 0) {
           buttonLeft.setDisabled(true);
@@ -175,7 +175,7 @@ module.exports = {
 			}
 
 			const left = async (pg,i) => {
-				let newPage =  (((pg-1) % pagecount ) + pagecount ) % pagecount;
+				let newPage =  Math.max(pg-1,0);
 				embed = getEmbed(newPage);
         if (newPage == 0) {
           buttonLeft.setDisabled(true);
@@ -211,8 +211,8 @@ module.exports = {
 					buttonLeft,
 					buttonRight
 				);
-				collected.first().message.edit({
-		        components: [noButtons]
+				msg.edit({
+		       components: [noButtons]
 		  	});
 			});
     },
