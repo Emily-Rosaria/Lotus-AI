@@ -1,7 +1,10 @@
 const mongoose = require("mongoose"); //database library
 const config = require('./../../config.json'); // load bot config
 const Users = require("./../../database/models/users.js"); // users model
-const Discord = require('discord.js'); // Image embed
+//const Discord = require('discord.js'); // Image embed
+
+const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
 function getRankNumber(n) {
@@ -15,6 +18,10 @@ function getRankNumber(n) {
 const data = new SlashCommandBuilder()
 	.setName("topbumps")
 	.setDescription('Shows a list of who has bumped the discord server the most via the /bump command.')
+	.addIntegerOption(option =>
+		option.setName('pagenum')
+			.setDescription('The page of the leaderboard to start at.')
+			.setRequired(false))
 module.exports = {
     name: 'topbumps', // The name of the command
 		data: data,
@@ -77,70 +84,126 @@ module.exports = {
 
 			// pagenum is one less than the actual page number, as it's the array index
 			const getEmbed = (pagenum) => {
-				const embed = new Discord.MessageEmbed()
+				const embed = new MessageEmbed()
 				.setColor('#62c5da')
-				.setAuthor(`${guild.name}'s Bumping Leaderboard`,guild.iconURL({format:"png",size:64,dynamic:true}))
+				.setAuthor({name:`${guild.name}'s Bumping Leaderboard`,iconURL:guild.iconURL({format:"png",size:64,dynamic:true})})
 				.setDescription(pages[pagenum]+"\n\n*Note: Your ranking here provides nothing besides a cool factor and the knowledge that you are helping the server grow.*")
 				if (pagecount == 1) {
-					embed.setFooter(`${ranktext}`);
+					embed.setFooter({text:`${ranktext}`});
 					return embed;
 				} else {
-					embed.setFooter(`Page ${pagenum+1}/${pagecount} • ${ranktext}`);
+					embed.setFooter({text:`Page ${pagenum+1}/${pagecount} • ${ranktext}`});
 					return embed;
 				}
 			}
 
 			// get initial page number, set to 1 unless a valid input is given, if an input is given then shift it within the bounds [1,pagecount].
-			var currentPage = args.length > 1 && !isNaN(args[1]) ? Math.floor(args[1]) : 1;
+			var currentPage = interaction.options.getInteger('pagenum') || 1;
 			currentPage = Math.max(1,Math.min(currentPage,pagecount));
-
 			// subtract 1 so it matches the array index
 			currentPage = currentPage - 1;
 
-			// post leaderboard embed
-			var msg = await interaction.reply({embeds: [getEmbed(currentPage)]});
-
-			// don't add reacts or anything if there's no other pages
+			// don't add buttons or anything if there's no other pages
 			if (pagecount < 2) {
+				interaction.reply({embeds: [getEmbed(currentPage)]});
 				return;
 			}
+			/*
+			client.commandCache.set(interaction.id,leaderboard);
 
-			await msg.react('⬅️').then(()=>msg.react('➡️')).catch(()=>msg.reply("Failed to post the full leaderboard. Do I have permission to add reactions and post embeds in this channel?"));
+			const cacheTimeout = setTimeout(() => {client.commandCache.delete(interaction.id); client.commandCacheTimeouts.delete(interaction.id)}, 1000*300);
 
-			let cooldown = 0;
+			client.commandCacheTimeouts.set(interaction.id,cacheTimeout);
+			*/
+			const buttonLeft = new MessageButton()
+			.setCustomId('topbumpsleft')
+			.setLabel('Last')
+			.setStyle('PRIMARY')
+      .setEmoji('⬅️')
 
-			const filter = (r, u) => {
-				if (!(['⬅️', '➡️'].includes(r.emoji.name) && u.id === interaction.user.id)) {return false}
-				if (cooldown + 400 > (new Date()).getTime()) {return false}
-				if (r.message.id != msg.id) {return false;}
-				cooldown = (new Date()).getTime();
-				return true;
+			const buttonRight = new MessageButton()
+			.setCustomId('topbumpsright')
+			.setLabel('Next')
+			.setStyle('PRIMARY')
+      .setEmoji('➡️')
+
+			if (currentPage == 0) {
+				buttonLeft.setDisabled(true);
+			}
+			if (currentPage+1 == pagecount) {
+				buttonRight.setDisabled(true);
+			}
+
+			const buttons = new MessageActionRow()
+			.addComponents(
+				buttonLeft,
+				buttonRight
+			);
+			// post leaderboard embed
+			const msg = await interaction.reply({embeds: [getEmbed(currentPage)],components: [buttons]});
+
+			const filter = (i) => {
+				i.deferUpdate();
+				return i.user.id == interaction.user.id && i.customId.startsWith('topbumps') //&& i.message.interaction.id == interaction.id
 			};
 
-			const collector = msg.createReactionCollector({filter, idle: 300000, dispose: true });
+			const collector = msg.createMessageComponentCollector({ filter, componentType: ComponentType.Button, idle: 30000 });
 
-			const right = async (pg) => {
+			const right = async (pg,i) => {
 				let newPage =  (((pg+1) % pagecount ) + pagecount ) % pagecount;
 				embed = getEmbed(newPage);
-				msg.edit({embeds: [embed]});
+				if (newPage == 0) {
+          buttonLeft.setDisabled(true);
+				} else {
+          buttonLeft.setDisabled(false);
+        }
+				if (newPage+1 == pagecount) {
+          buttonRight.setDisabled(true);
+				} else {
+          buttonRight.setDisabled(false);
+        }
+				const newButtons = new MessageActionRow()
+				.addComponents(
+					buttonLeft,
+					buttonRight
+				);
+				await i.update({embeds: [getEmbed(currentPage)],components: [newButtons]});
 				return newPage;
 			}
 
-			const left = async (pg) => {
+			const left = async (pg,i) => {
 				let newPage =  (((pg-1) % pagecount ) + pagecount ) % pagecount;
 				embed = getEmbed(newPage);
-				msg.edit({embeds: [embed]});
+				if (newPage == 0) {
+					buttonRight.setDisabled(true);
+				} else {
+          buttonRight.setDisabled(false);
+        }
+				if (newPage+1 == pagecount) {
+					buttonLeft.setDisabled(true);
+				} else {
+          buttonLeft.setDisabled(false);
+        }
+				const newButtons = new MessageActionRow()
+				.addComponents(
+					buttonLeft,
+					buttonRight
+				);
+				await i.update({embeds: [getEmbed(currentPage)],components: [newButtons]});
 				return newPage;
 			}
 
-			collector.on('collect', async (r, u) => {
-				if (['⬅️'].includes(r.emoji.name)) {currentPage = await left(currentPage)}
-				if (['➡️'].includes(r.emoji.name)) {currentPage = await right(currentPage)}
+			collector.on('collect', async (i) => {
+				if (i.customId.endsWith('left')) {currentPage = await left(currentPage,i)}
+				if (i.customId.endsWith('right')) {currentPage = await right(currentPage,i)}
+				//collector.dispose(i);
 			});
 
-			collector.on('remove', async (r) => {
-				if (['⬅️'].includes(r.emoji.name)) {currentPage = await left(currentPage)}
-				if (['➡️'].includes(r.emoji.name)) {currentPage = await right(currentPage)}
+			collector.on('end', collected => {
+				collected.first().message.edit({
+		    components: collected.first().message.components
+		      .map(c => c.map(c => c.setDisabled(true)))
+		  	});
 			});
     },
 };

@@ -70,7 +70,18 @@ for (const file of eventFiles) {
     const event = require(`./events/${file}`);
     client.events.set(event.name, event);
 }
+/*
+// load the core events into client
+client.buttons = new Discord.Collection();
+const eventFiles = fs.readdirSync('./buttons').filter(file => file.endsWith('.js'));
+for (const file of eventFiles) {
+    const button = require(`./buttons/${file}`);
+    client.button.set(button.name, button);
+}
 
+client.commandCache = new Discord.Collection(); // data for interactions
+client.commandCacheTimeouts = new Discord.Collection(); // data for interactions
+*/
 const cooldowns = new Discord.Collection(); // Creates an empty list for storing timeouts so people can't spam with commands
 
 client.automods = new Discord.Collection();
@@ -205,6 +216,18 @@ client.on('guildMemberRemove', async member => {
 });
 
 client.on('interactionCreate', async interaction => {
+  /*
+  if (interaction.isButton()) {
+    const button = client.buttons.get(interaction.customId.split('-')[0]);
+    if (!button) return;
+    try {
+      await button.button(interaction);
+    } catch (error) {
+      if (error) console.error(error);
+      await interaction.reply({ content: 'There was an error while executing this interaction!', ephemeral: true });
+    }
+  }
+  */
   if (!interaction.isCommand()) return;
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
