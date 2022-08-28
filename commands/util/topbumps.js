@@ -117,13 +117,13 @@ module.exports = {
 			*/
 			const buttonLeft = new MessageButton()
 			.setCustomId('topbumpsleft')
-			.setLabel('Last')
+			.setLabel('')
 			.setStyle('PRIMARY')
       .setEmoji('⬅️')
 
 			const buttonRight = new MessageButton()
 			.setCustomId('topbumpsright')
-			.setLabel('Next')
+			.setLabel('')
 			.setStyle('PRIMARY')
       .setEmoji('➡️')
 
@@ -140,19 +140,22 @@ module.exports = {
 				buttonRight
 			);
 			// post leaderboard embed
-			const msg = await interaction.reply({embeds: [getEmbed(currentPage)],components: [buttons]});
+			await interaction.reply({embeds: [getEmbed(currentPage)],components: [buttons]});
 
 			const filter = (i) => {
-				i.deferUpdate();
-				return i.user.id == interaction.user.id && i.customId.startsWith('topbumps') //&& i.message.interaction.id == interaction.id
+				if (i.user.id == interaction.user.id && i.customId.startsWith('topbumps')) return true //&& i.message.interaction.id == interaction.id
+        i.deferUpdate();
+        return false;
 			};
 
-			const collector = msg.createMessageComponentCollector({ filter, componentType: ComponentType.Button, idle: 30000 });
+      const msg = await interaction.fetchReply();
+
+			const collector = msg.createMessageComponentCollector({ filter, componentType: "BUTTON", idle: 30000 });
 
 			const right = async (pg,i) => {
 				let newPage =  (((pg+1) % pagecount ) + pagecount ) % pagecount;
 				embed = getEmbed(newPage);
-				if (newPage == 0) {
+        if (newPage == 0) {
           buttonLeft.setDisabled(true);
 				} else {
           buttonLeft.setDisabled(false);
@@ -174,15 +177,15 @@ module.exports = {
 			const left = async (pg,i) => {
 				let newPage =  (((pg-1) % pagecount ) + pagecount ) % pagecount;
 				embed = getEmbed(newPage);
-				if (newPage == 0) {
-					buttonRight.setDisabled(true);
-				} else {
-          buttonRight.setDisabled(false);
-        }
-				if (newPage+1 == pagecount) {
-					buttonLeft.setDisabled(true);
+        if (newPage == 0) {
+          buttonLeft.setDisabled(true);
 				} else {
           buttonLeft.setDisabled(false);
+        }
+				if (newPage+1 == pagecount) {
+          buttonRight.setDisabled(true);
+				} else {
+          buttonRight.setDisabled(false);
         }
 				const newButtons = new MessageActionRow()
 				.addComponents(
@@ -201,8 +204,7 @@ module.exports = {
 
 			collector.on('end', collected => {
 				collected.first().message.edit({
-		    components: collected.first().message.components
-		      .map(c => c.map(c => c.setDisabled(true)))
+		    components: [collected.first().message.components.map(c => c.map(c => c.setDisabled(true)))]
 		  	});
 			});
     },
