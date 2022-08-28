@@ -19,7 +19,7 @@ module.exports = {
 			if (!user) {
 				user = interaction.user;
 			}
-			const userID = interaction.guild.members.resolveId(user);
+			const userID = interaction.guild.members.resolveId(user) || "-1";
 			Users.findById({_id: userID}, function (err, docs) {
 		    if (err || !docs) {
 		      return interaction.reply({content:"No roleplay data found for this user.",ephemeral: true});
