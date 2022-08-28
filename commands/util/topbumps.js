@@ -60,14 +60,14 @@ module.exports = {
 			var ranktext = `Your leaderboard rank: ${getRankNumber(-1)}`;
 
 			const userScore = leaderboard.find((e,i)=>{
-				if (e.userID == message.author.id) {
+				if (e.userID == interaction.user.id) {
 					ranktext = `Your leaderboard rank: ${getRankNumber(i+1)}`;
 					return true;
 				}
 			});
 
 			// get the guild's data
-			var client = message.client;
+			var client = interaction.client;
 			var guild = await client.guilds.resolve(config.guild);
 			if (!guild || !guild.name) {
 				guild = {};
