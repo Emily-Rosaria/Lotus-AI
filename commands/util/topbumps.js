@@ -204,7 +204,7 @@ module.exports = {
 
 			collector.on('end', collected => {
 				collected.first().message.edit({
-		    components: [collected.first().message.components.map(c => c.map(c => c.setDisabled(true)))]
+		    components: [buttons.map(c => c.setDisabled(true))]
 		  	});
 			});
     },
