@@ -41,7 +41,7 @@ module.exports = {
 			const messageID = interaction.options.getString('message-id').match(/\d+/g)[0];
 			channel = channel ? channel : interaction.channel;
 			let cha = interaction.client.channels.resolve(channel);
-			if (!cha || !cha.isText) {
+			if (!cha || cha.type != Discord.ChannelType.GuildText) {
 				return interaction.reply({content:`I can only send messages in text channels.`,ephemeral: true});
 			}
 			cha.messages.fetch(messageID).then((m => {

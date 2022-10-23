@@ -25,11 +25,11 @@ module.exports = {
 		      return interaction.reply({content:"No data found for this user.",ephemeral: true});
 		    }
 				interaction.guild.members.fetch(userID).then((u) => {
-					const embed = new Discord.MessageEmbed().setThumbnail(u.displayAvatarURL()).setTitle(`${u.displayName}'s Bump Count`).setFooter({ text:`${u.user.tag}`}).setTimestamp().setColor(u.displayHexColor).setDescription(`Total Bumps: \`${docs.bumps}\``);
+					const embed = new Discord.EmbedBuilder().setThumbnail(u.displayAvatarURL()).setTitle(`${u.displayName}'s Bump Count`).setFooter({ text:`${u.user.tag}`}).setTimestamp().setColor(u.displayHexColor).setDescription(`Total Bumps: \`${docs.bumps}\``);
 					interaction.reply({embeds: [embed]});
 				}).catch((e) => {
 					console.error(e);
-					const embed = new Discord.MessageEmbed().setTitle('Unknown User\'s Bump Count').setFooter({ text:`ID: ${userID}`}).setTimestamp().setDescription(`Total Bumps: \`${docs.bumps}\``);
+					const embed = new Discord.EmbedBuilder().setTitle('Unknown User\'s Bump Count').setFooter({ text:`ID: ${userID}`}).setTimestamp().setDescription(`Total Bumps: \`${docs.bumps}\``);
 					interaction.reply({embeds: [embed]});
 				})
 			});

@@ -4,7 +4,7 @@ require('dotenv').config(); //for .env file
 const fs = require('fs');
 const config = require('./../../config.json'); // load bot config
 const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+const { Routes } = require('discord-api-types/v10');
 const Discord = require('discord.js');                  // Loads the discord API library
 
 module.exports = {

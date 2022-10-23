@@ -18,7 +18,7 @@ module.exports = {
     async execute(interaction) {
         // Get cat from the random.cat api.
         const { file } = await fetch('https://aws.random.cat/meow').then(response => response.json());
-        const embed = new Discord.MessageEmbed().setImage(file).setTitle('Cat').setFooter({ text:'Source: aws.random.cat'}).setTimestamp();
+        const embed = new Discord.EmbedBuilder().setImage(file).setTitle('Cat').setFooter({ text:'Source: aws.random.cat'}).setTimestamp();
         interaction.reply({embeds: [embed]}); // Replies to the user with a random cat
     },
 };

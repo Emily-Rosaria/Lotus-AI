@@ -21,7 +21,7 @@ const {google} = require('googleapis');
 var cron = require('node-cron'); // run regular scheduled tasks
 const config = require('./config.json');
 const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+const { Routes } = require('discord-api-types/v10');
 
 const dev = config.dev; // my ID on Discord
 
@@ -31,10 +31,9 @@ const mongoose = require("mongoose"); // database library
 const connectDB = require("./database/connectDB.js"); // local database connection
 var database = config.dbName; // Database name for the local database
 
-const botIntents = new Discord.Intents();
-botIntents.add(Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_VOICE_STATES, Discord.Intents.FLAGS.GUILD_MEMBERS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Discord.Intents.FLAGS.GUILD_MESSAGE_TYPING, Discord.Intents.FLAGS.DIRECT_MESSAGES, Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Discord.Intents.FLAGS.DIRECT_MESSAGE_TYPING);
+const botIntents = [Discord.GatewayIntentBits.DirectMessages, Discord.GatewayIntentBits.DirectMessageReactions, Discord.GatewayIntentBits.DirectMessageTyping, Discord.GatewayIntentBits.GuildBans, Discord.GatewayIntentBits.GuildEmojisAndStickers, Discord.GatewayIntentBits.GuildIntegrations, Discord.GatewayIntentBits.GuildInvites, Discord.GatewayIntentBits.GuildMembers, Discord.GatewayIntentBits.GuildMessageReactions, Discord.GatewayIntentBits.GuildMessages, Discord.GatewayIntentBits.Guilds, Discord.GatewayIntentBits.MessageContent]; //Discord.GatewayIntentBits.AutoModerationConfiguration, Discord.GatewayIntentBits.AutoModerationExecution, Discord.GatewayIntentBits.GuildVoiceStates, Discord.GatewayIntentBits.GuildPresences, Discord.GatewayIntentBits.GuildScheduledEvents, Discord.GatewayIntentBits.GuildWebhooks, Discord.GatewayIntentBits.GuildMessageTyping
 
-const client = new Discord.Client({intents: botIntents, partials: ["CHANNEL","MESSAGE"], allowedMentions: { parse: ['users', 'roles'], repliedUser: true}}); // Initiates the client
+const client = new Discord.Client({intents: botIntents, partials: [Discord.Partials.Channel, Discord.Partials.Message], allowedMentions: { parse: ['users', 'roles'], repliedUser: true}}); // Initiates the client
 
 client.commands = new Discord.Collection(); // Creates an empty list in the client object to store all commands
 const getAllCommands = function (dir, cmds) {
@@ -153,7 +152,7 @@ client.on('messageCreate', async message => {
       return;
     }
     // handle update
-    if (message.author.id == dev && message.channel.type.toLowerCase() == "dm") {
+    if (message.author.id == dev && message.channel.type == Discord.ChannelType.DM) {
       if (message.content.startsWith('$update')) {
         const command = client.commands.get("update");
         command.execute(message);

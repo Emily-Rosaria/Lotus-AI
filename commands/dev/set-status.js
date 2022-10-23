@@ -21,7 +21,7 @@ module.exports = {
 			gameName = gameName ? gameName.trim() : gameName;
       if (gameName && gameName.length > 0) {
         gameName = gameName.length > 31 ? gameName.slice(0,30) + '...' : gameName;
-        status.activities = [{ type: 'PLAYING', name: gameName }];
+        status.activities = [{ name: gameName }];
       }
       interaction.client.user.setPresence(status);
       if (gameName && gameName.length > 0) {

@@ -3,7 +3,7 @@ const config = require('./../../config.json'); // load bot config
 const Users = require("./../../database/models/users.js"); // users model
 //const Discord = require('discord.js'); // Image embed
 
-const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, ComponentType } = require('discord.js');
 
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -84,7 +84,7 @@ module.exports = {
 
 			// pagenum is one less than the actual page number, as it's the array index
 			const getEmbed = (pagenum) => {
-				const embed = new MessageEmbed()
+				const embed = new EmbedBuilder()
 				.setColor('#62c5da')
 				.setAuthor({name:`${guild.name}'s Bumping Leaderboard`,iconURL:guild.iconURL({format:"png",size:64,dynamic:true})})
 				.setDescription(pages[pagenum]+"\n\n*Note: Your ranking here provides nothing besides a cool factor and the knowledge that you are helping the server grow.*")
@@ -115,16 +115,16 @@ module.exports = {
 
 			client.commandCacheTimeouts.set(interaction.id,cacheTimeout);
 			*/
-			const buttonLeft = new MessageButton()
+			const buttonLeft = new ButtonBuilder()
 			.setCustomId('topbumpsleft')
-			.setLabel('')
-			.setStyle('PRIMARY')
+			.setLabel('​')
+			.setStyle(ButtonStyle.Primary)
       .setEmoji('⬅️')
 
-			const buttonRight = new MessageButton()
+			const buttonRight = new ButtonBuilder()
 			.setCustomId('topbumpsright')
-			.setLabel('')
-			.setStyle('PRIMARY')
+			.setLabel('​')
+			.setStyle(ButtonStyle.Primary)
       .setEmoji('➡️')
 
 			if (currentPage == 0) {
@@ -134,7 +134,7 @@ module.exports = {
 				buttonRight.setDisabled(true);
 			}
 
-			const buttons = new MessageActionRow()
+			const buttons = new ActionRowBuilder()
 			.addComponents(
 				buttonLeft,
 				buttonRight
@@ -150,7 +150,7 @@ module.exports = {
 
       const msg = await interaction.fetchReply();
 
-			const collector = msg.createMessageComponentCollector({ filter, componentType: "BUTTON", idle: 300000 });
+			const collector = msg.createMessageComponentCollector({ filter, componentType: ComponentType.Button, idle: 300000 });
 
 			const right = async (pg,i) => {
 				let newPage =  Math.min(pg+1,pagecount-1);
@@ -165,7 +165,7 @@ module.exports = {
 				} else {
           buttonRight.setDisabled(false);
         }
-				const newButtons = new MessageActionRow()
+				const newButtons = new ActionRowBuilder()
 				.addComponents(
 					buttonLeft,
 					buttonRight
@@ -187,7 +187,7 @@ module.exports = {
 				} else {
           buttonRight.setDisabled(false);
         }
-				const newButtons = new MessageActionRow()
+				const newButtons = new ActionRowBuilder()
 				.addComponents(
 					buttonLeft,
 					buttonRight
@@ -205,7 +205,7 @@ module.exports = {
 			collector.on('end', collected => {
         buttonRight.setDisabled(true)
         buttonLeft.setDisabled(true)
-        const noButtons = new MessageActionRow()
+        const noButtons = new ActionRowBuilder()
 				.addComponents(
 					buttonLeft,
 					buttonRight

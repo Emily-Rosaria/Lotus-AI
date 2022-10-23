@@ -24,7 +24,7 @@ module.exports = {
         url = fetched.message;
       }
       if (url) {
-        const embed = new Discord.MessageEmbed().setImage(url).setTitle('Woof').setFooter({ text:'Source: dog.ceo/api'}).setTimestamp();
+        const embed = new Discord.EmbedBuilder().setImage(url).setTitle('Woof').setFooter({ text:'Source: dog.ceo/api'}).setTimestamp();
         interaction.reply({embeds: [embed]}); // Replies to the user with a random dog
       } else {
         interaction.reply({content:"I'm having trouble fetching images from the `dog.ceo` API right now. Try again in a moment.",ephemeral: true});

@@ -211,7 +211,7 @@ module.exports = {
 
       // pagenum is one less than the actual page number, as it's the array index
       const getEmbed = (pagenum) => {
-        const embed = new Discord.MessageEmbed()
+        const embed = new Discord.EmbedBuilder()
         .setColor('#dc1414')
         .setAuthor(`${userData.name}'s Documents`,userData.iconURL)
         const lines = pages[pagenum].split('\n');

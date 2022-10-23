@@ -41,7 +41,7 @@ module.exports = {
         const tags = [interaction.options.getString('tag1'),interaction.options.getString('tag2'),interaction.options.getString('tag3'),interaction.options.getString('tag4'),interaction.options.getString('tag5')].filter(t => t).map(t => t.toLowerCase().replace(/ +/g,"_"))
 
         Booru.search('safebooru', tags, { limit: 1, random: true }).then(image =>{
-          const embed = new Discord.MessageEmbed()
+          const embed = new Discord.EmbedBuilder()
           .setColor('#2e51a2')
           .setImage(image[0].fileUrl)
           .setFooter({ text:'Image from safebooru: '+tags.join(', ')})
