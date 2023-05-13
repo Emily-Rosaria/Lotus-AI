@@ -7,10 +7,16 @@ const unapproved_role = '992059872218714112';
 const rejected_role = '991489138169745458'; // role for people who submitted something and/or were rejected
 const lurk_channel = '993660499470331990';
 const oneDay = 24 * 60 * 60 * 1000; // one day in milliseconds
+const submission_channel = '892995502319222788'
+const approved1 = "892995502319222789"
+const approved2 = "893015367994208317"
+const intros = "992487101083959506"
 
 module.exports = async function (client) {
     var guild = await client.guilds.fetch(guildID);
     var channel = await guild.channels.resolve(lurk_channel);
+    var channel2 = await guild.channels.resolve(submission_channel);
+    var allMembers = await guild.members.fetch()
     const now = new Date();
 
     // delete old reminder
@@ -18,7 +24,7 @@ module.exports = async function (client) {
       if (err) { console.error(err) }
       if (data) {
         channel.messages.fetch(data.trim())
-        .then(message => message.delete())
+        .then(message => {if (message) {message.delete()}})
         .catch(console.error);
       }
     });
@@ -54,6 +60,101 @@ module.exports = async function (client) {
             if (err) console.error(err);
           });
         }).catch(console.error)
+      } else {
+        fs.writeFile("prune_temp.txt", "", (err) => {
+          if (err) console.error(err);
+        });
       }
     }).catch(console.error);
+    // delete old reminder
+
+    await fs.readFile("prune_temp2.txt", "utf-8", (err, data) => {
+      if (err) { console.error(err) }
+      if (data) {
+        channel2.messages.fetch(data.trim())
+        .then(message => {if (message) {message.delete()}})
+        .catch(console.error);
+      }
+    });
+    channel2.messages.fetch({limit:100, cache: false}).then(async (messages) => {
+      var subMessages = messages.filter(m => {
+        if (m.createdTimestamp + 30*60 > now.getTime()) {
+          return false;
+        }
+        if (!allMembers.has(m.author.id) && allMembers.size+10 > guild.memberCount && guild.memberCount) {
+          m.delete().catch(console.error)
+          return false;
+        }
+        if (m.reactions.cache.find(r => r.emoji.name == '☑️') && m.author.id != client.user.id) {
+          return true;
+        }
+        return false;
+      })
+      const users = [...new Set([...subMessages.map(m => m.author.id).values()])]
+      reminder = !users || users.length == 0 ? "" : "> " + users.map(u=>`<@${u}>`).join(', ') + "\nHello! This is your friendly neighbourhood robot here to remind you to repost your recent submission to <#892995502319222789> or <#893015367994208317> as appropriate. If you've already done this, you can delete your approved submission in this channel.";
+      if (reminder) {
+        channel2.send({content: reminder}).then(msg => {
+          const data = ""+msg.id;
+          fs.writeFile("prune_temp2.txt", data, (err) => {
+            if (err) console.error(err);
+          });
+        }).catch(console.error)
+      } else {
+        fs.writeFile("prune_temp2.txt", "", (err) => {
+          if (err) console.error(err);
+        });
+      }
+    })
+
+    if (!guild.memberCount || allMembers.size+10 < guild.memberCount) {
+      return
+    }
+    var channel3 = await guild.channels.resolve(approved1);
+    var channel4 = await guild.channels.resolve(approved2);
+    var channel5 = await guild.channels.resolve(intros);
+    channel3.messages.fetch({limit:100,cache:false}).then(messages => {
+      const noMember = messages.filter(m => {
+        if (allMembers.has(m.author.id) || m.createdTimestamp + 30*60 > now.getTime()) {
+          return false
+        }
+        if (m.createdTimestamp + 14*24*60*60 > now.getTime()) {
+          return true
+        }
+        m.delete().catch(console.error)
+        return false
+      })
+      if (noMember && noMember.size > 0) {
+        channel3.bulkDelete(noMember).catch(console.error)
+      }
+    }).catch(console.error)
+    channel4.messages.fetch({limit:100,cache:false}).then(messages => {
+      const noMember = messages.filter(m => {
+        if (allMembers.has(m.author.id) || m.createdTimestamp + 30*60 > now.getTime()) {
+          return false
+        }
+        if (m.createdTimestamp + 14*24*60*60 > now.getTime()) {
+          return true
+        }
+        m.delete().catch(console.error)
+        return false
+      })
+      if (noMember && noMember.size > 0) {
+        channel4.bulkDelete(noMember).catch(console.error)
+      }
+    }).catch(console.error)
+    channel5.messages.fetch({limit:100,cache:false}).then(messages => {
+      const noMember = messages.filter(m => {
+        if (allMembers.has(m.author.id) || m.createdTimestamp + 30*60 > now.getTime()) {
+          return false
+        }
+        if (m.createdTimestamp + 14*24*60*60 > now.getTime()) {
+          return true
+        }
+        m.delete().catch(console.error)
+        return false
+      })
+      if (noMember && noMember.size > 0) {
+        channel5.bulkDelete(noMember).catch(console.error)
+      }
+    }).catch(console.error)
 };

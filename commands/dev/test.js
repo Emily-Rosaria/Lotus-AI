@@ -14,61 +14,55 @@ module.exports = {
     group: 'dev',
     async execute(message) {
       if (message.author.id != "247344219809775617") {return}
-
-      Users.findByIdAndDelete("302050872383242240").exec();
-
-      return message.reply("Write code bitch, yeet.");
-
       const client = message.client;
-      let guild = await client.guilds.fetch(config.guild);
-      const rpGroups = Object.keys(config.rpChannels);
-      let channel = await guild.channels.fetch('892995501627154450');
-      let userbumps = {};
-      let last = "1013223096477556817";
-      let quit = false;
-      for (let i = 0; i<13 && !quit; i++) {
-        console.log("i = "+i);
-        await channel.messages.fetch({ limit: 100, before: last }).then(async messages => {
-          if (!messages || messages.size == 0) {
-            console.log("No messages.");
-            quit = true;
-            return;
+      /*
+      const now = new Date();
+
+      var guild = await client.guilds.fetch("892995500180131870");
+      var allMembers = await guild.members.fetch();
+      var channel3 = await guild.channels.resolve("892995502319222789");
+      var channel4 = await guild.channels.resolve("893015367994208317");
+      channel3.messages.fetch({limit:100,cache:false}).then(messages => {
+        const noMember = messages.filter(m => {
+          if (allMembers.has(m.author.id) || m.createdTimestamp + 30*60 > now.getTime()) {
+            return false
           }
-          messages.forEach(async (msg,index) => {
-            if (msg.author.id != "302050872383242240") {
-              return;
-            }
-            if (last == msg.id) {
-              if (index == 0) {
-                return;
-              }
-              quit = true;
-              console.log("Consecutive dupes.");
-              return;
-            }
-            if (msg.interaction && msg.interaction.commandName && msg.interaction.commandName == "bump" && msg.interaction.user && msg.interaction.user.id) {
-              last = msg.id;
-              if (userbumps[msg.interaction.user.id]) {
-                userbumps[msg.interaction.user.id] += 1;
-              } else {
-                userbumps[msg.interaction.user.id] = 1;
-              }
-            }
-          });
-        }).catch(e => {
-          console.error(e);
-          return;
-        });
-        console.log(userbumps);
-      }
-      for (const u in userbumps) {
-        Users.findOneAndUpdate({_id: u},{
-          "$inc": {
-            "bumps": userbumps[u]
+          if (m.createdTimestamp + 14*24*60*60 > now.getTime()) {
+            return true
           }
-        }, {upsert: true}).exec();
-        console.log("Updated "+u+" with "+userbumps[u]+" bumps!");
+          //m.delete().catch(console.error)
+          console.log(`Delete ${m.id} by ${m.author.tag}`)
+          return false
+        })
+        if (noMember && noMember.size > 0) {
+          console.log(`Bulk Delete messages by ${noMember.map(m => m.author.tag).join(', ')}`)
+          //channel3.bulkDelete(noMember).catch(console.error)
+        }
+      }).catch(console.error)
+      channel4.messages.fetch({limit:100,cache:false}).then(messages => {
+        const noMember = messages.filter(m => {
+          if (allMembers.has(m.author.id) || m.createdTimestamp + 30*60 > now.getTime()) {
+            return false
+          }
+          if (m.createdTimestamp + 14*24*60*60 > now.getTime()) {
+            return true
+          }
+          console.log(`Delete ${m.id} by ${m.author.tag}`)
+          //m.delete().catch(console.error)
+          return false
+        })
+        if (noMember && noMember.size > 0) {
+          console.log(`Bulk Delete messages by ${noMember.map(m => m.author.tag).join(', ')}`)
+          //channel4.bulkDelete(noMember).catch(console.error)
+        }
+      }).catch(console.error)
+      return;
+      */
+      var prune = require('./../../guild_auto_prune.js');
+      try {
+        prune(message.client);
+      } catch (err) {
+        console.error(err);
       }
-      console.log("Done!");
     },
 };
