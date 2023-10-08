@@ -91,7 +91,7 @@ module.exports = async function (client) {
         return false;
       })
       const users = [...new Set([...subMessages.map(m => m.author.id).values()])]
-      reminder = !users || users.length == 0 ? "" : "> " + users.map(u=>`<@${u}>`).join(', ') + "\nHello! This is your friendly neighbourhood robot here to remind you to repost your recent submission to <#892995502319222789> or <#893015367994208317> as appropriate. If you've already done this, you can delete your approved submission in this channel.";
+      reminder = !users || users.length == 0 ? "" : "> " + users.map(u=>`<@${u}>`).join(', ') + "\nWarning! You have an old submission left in this channel. Please repost your approved characters to <#892995502319222789> or <#893015367994208317> as appropriate. If you've already done this, you should delete your old submissions in this channel to avoid being pinged. After an extended time, **we will delete old submissions on our own and users who ignore this message may be kicked for inactivity.**";
       if (reminder) {
         channel2.send({content: reminder}).then(msg => {
           const data = ""+msg.id;
